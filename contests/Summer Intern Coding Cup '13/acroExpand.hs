@@ -1,19 +1,20 @@
-import qualified Data.Char as Char
+import qualified Data.Char as C
 
-wordByWord :: (Num b, Show a) => ([[[a]]], b) -> [a] -> ([[[a]]], b)
-wordByWord (xs, -1) y:ys
-	| Char.isUpper (head y) = ((y:[]):xs, 0)
+wordByWord :: ([[[Char]]], Int) -> [Char] -> ([[[Char]]], Int)
+wordByWord (xs, -1) word@(y:ys)
+	| C.isUpper y && word /= "The" = ((word:[]):xs, 0)
 	| otherwise = (xs, -1)
-wordByWord (x:xs, n) y:ys
-	| Char.isUpper (head y) = ((y:x):xs, 0)
-	| n > 2 = (x:xs, -1)
-	| otherwise = ((y:x):xs, n + 1)
+wordByWord (x:xs, n) word@(y:ys)
+	| C.isUpper y = ((word:x):xs, 0)
+        | (not . C.isLower) y = (x:xs, -1)
+	| n > 1 = ((dropWhile (not . C.isUpper . head) x):xs, -1)
+	| otherwise = ((word:x):xs, n + 1)
 
-getAcronyms :: (Show s) => [s] -> [[[s]]]
+getAcronyms :: [Char] -> [[[Char]]]
 getAcronyms para = 
 	let arr = words para	
-	in 	head $ foldl wordByWord ([], -1) arr
-
+        in filter (\x -> (length x) > 1) . map reverse . fst $ foldl wordByWord ([], -1) arr
+           
 main = do
-	pg <- getLine
-	putStrLn getAcronyms pg
+  para <- getLine
+  putStr $ show $ getAcronyms para
