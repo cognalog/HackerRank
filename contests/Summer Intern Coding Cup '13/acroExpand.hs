@@ -29,4 +29,4 @@ main = do
   n <- getLine
   cands <- fmap concat $ mapM (fmap acroGet) $ (take $ read n) . repeat $ getLine
   tests <- sequence $ (take $ read n) . repeat $ getLine
-  print $ map (acroComp cands) tests
+  sequence $ map (putStrLn . id) $ map (acroComp cands) tests
