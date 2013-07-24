@@ -21,12 +21,12 @@ compHelper t g = let caps = filter (C.isUpper . head) g
                  in (g, (length caps == length t) && (and $ zipWith (\tc gw -> tc == head gw) t caps))
            
 acroComp :: [[[Char]]] -> [Char] -> [Char]
-acroComp gs t = let res = takeWhile (\x -> snd x) $ map (compHelper t) gs
+acroComp gs t = let res = takeWhile (snd) $ map (compHelper t) gs
                 in if null res then "Nothing"
                    else L.intercalate " " . fst $ head res
            
 main = do
   n <- getLine
-  cands <- mapM (fmap acroGet) $ (take $ read n) . repeat $ getLine
+  cands <- fmap concat $ mapM (fmap acroGet) $ (take $ read n) . repeat $ getLine
   tests <- sequence $ (take $ read n) . repeat $ getLine
-  print $ zipWith acroComp cands tests
+  print $ map (acroComp cands) tests
