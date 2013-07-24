@@ -1,4 +1,5 @@
 import qualified Data.Char as C
+import qualified Data.List as L
 
 wordByWord :: ([[[Char]]], Int) -> [Char] -> ([[[Char]]], Int)
 wordByWord (xs, -1) word@(y:ys)
@@ -10,12 +11,22 @@ wordByWord (x:xs, n) word@(y:ys)
 	| n > 0 = ((dropWhile (not . C.isUpper . head) x):xs, -1)
 	| otherwise = ((word:x):xs, n + 1)
 
-getAcronyms :: [Char] -> [[[Char]]]
-getAcronyms para = 
+acroGet :: [Char] -> [[[Char]]]
+acroGet para = 
 	let arr = words para	
         in filter (\x -> (length x) > 1) . map reverse . fst $ foldl wordByWord ([], -1) arr
            
+compHelper :: [Char] -> [[Char]] -> ([[Char]], Bool)
+compHelper t g = let caps = filter (C.isUpper . head) g
+                 in (g, (length caps == length t) && (and $ zipWith (\tc gw -> tc == head gw) t caps))
+           
+acroComp :: [[[Char]]] -> [Char] -> [Char]
+acroComp gs t = let res = takeWhile (\x -> snd x) $ map (compHelper t) gs
+                in if null res then "Nothing"
+                   else L.intercalate " " . fst $ head res
+           
 main = do
-  putStrLn "Paragraph:"
-  para <- getLine
-  putStrLn $ show $ getAcronyms para
+  n <- getLine
+  cands <- mapM (fmap acroGet) $ (take $ read n) . repeat $ getLine
+  tests <- sequence $ (take $ read n) . repeat $ getLine
+  print $ zipWith acroComp cands tests
