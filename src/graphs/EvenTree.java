@@ -9,8 +9,7 @@ import java.io.InputStreamReader;
  * challenge</a>
  * </p>
  * <p>
- * note: you'll need to rename the class to "Solution" and remove the package declaration above before running on
- * Hackerrank.com
+ *
  * </p>
  * 2014
  * 
@@ -18,7 +17,6 @@ import java.io.InputStreamReader;
  */
 public class EvenTree {
     public static void main(String[] args) throws Exception {
-
         BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         String[] counts = stdin.readLine().split(" ");
         int nodes = Integer.parseInt(counts[0]);
