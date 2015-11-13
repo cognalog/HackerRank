@@ -3,5 +3,4 @@ HackerRank
 
 Solutions to HackerRank Challenges
 
-note: you'll need to rename the class to "Solution" and remove the package declaration above before running on
-Hackerrank.com
+I've done plenty more than you'll see here (these are mostly the less easy ones) -- just check out [My Hackerrank profile](https://www.hackerrank.com/cognalog).
