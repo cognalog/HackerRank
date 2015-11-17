@@ -1,4 +1,4 @@
-package graphs;
+package datastructures.graphs;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
  *
  * </p>
  * 2014
- * 
+ *
  * @author Tyrone Hinderson
  */
 public class EvenTree {

@@ -1,4 +1,4 @@
-package tree;
+package datastructures.tree;
 
 /**
  * Solution to <a href="https://www.hackerrank.com/challenges/self-balancing-tree">Self Balancing Tree</a>

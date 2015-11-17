@@ -1,24 +1,27 @@
-package graphs;
+package datastructures.graphs;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Queue;
 
 /**
- * Solution to <a href="https://www.hackerrank.com/challenges/dijkstrashortreach">Dijkstra: Shortest Reach 2</a>
+ * Solution for <a href="https://www.hackerrank.com/challenges/bfsshortreach">Breadth First Search: Shortest Reach</a>.
+ * Lots in common with {@link ShortestReach2}, since this is basically a simplified version.
  * <p/>
  * 2015
  *
  * @author Tyrone Hinderson (╯°□°）╯︵ ┻━┻
  */
-public class ShortestReach2 {
+public class ShortestReach {
+
+    private static final int EDGE_WEIGHT = 6;
 
     private static class Vertex {
         private final int id;
@@ -73,33 +76,6 @@ public class ShortestReach2 {
         }
     }
 
-    private static class Edge {
-        private final Vertex vertex;
-        private final int weight;
-
-        private Edge(final Vertex vertex, final int weight) {
-            this.vertex = vertex;
-            this.weight = weight;
-        }
-
-        public Vertex getVertex() {
-            return vertex;
-        }
-
-        public int getWeight() {
-            return weight;
-        }
-
-        @Override
-        public String toString() {
-            final StringBuilder sb = new StringBuilder("Edge{");
-            sb.append("vertex=").append(vertex);
-            sb.append(", weight=").append(weight);
-            sb.append('}');
-            return sb.toString();
-        }
-    }
-
     public static void main(String[] args) throws IOException {
 
         final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -108,7 +84,7 @@ public class ShortestReach2 {
             final String[] nAndM = reader.readLine().split(" ");
             final int n = Integer.parseInt(nAndM[0]);
             final int m = Integer.parseInt(nAndM[1]);
-            final Map<Vertex, List<Edge>> graph = new HashMap<>(n);
+            final Map<Vertex, List<Vertex>> graph = new HashMap<>(n);
             final int[] distances = new int[n + 1];
             Arrays.fill(distances, Integer.MAX_VALUE);
 
@@ -116,7 +92,6 @@ public class ShortestReach2 {
                 final String[] edgeDef = reader.readLine().split(" ");
                 final int x = Integer.parseInt(edgeDef[0]);
                 final int y = Integer.parseInt(edgeDef[1]);
-                final int r = Integer.parseInt(edgeDef[2]);
 
                 final Vertex v1 = new Vertex(x);
                 final Vertex v2 = new Vertex(y);
@@ -126,14 +101,12 @@ public class ShortestReach2 {
                 if (!graph.containsKey(v2)) {
                     graph.put(v2, new ArrayList<>());
                 }
-                graph.get(v1).add(new Edge(v2, r));
-                graph.get(v2).add(new Edge(v1, r));
+                graph.get(v1).add(v2);
+                graph.get(v2).add(v1);
             }
             final int start = Integer.parseInt(reader.readLine());
             distances[start] = 0;
-            final Queue<Vertex> traversalQueue = new PriorityQueue<>((o1, o2) -> {
-                return Integer.compare(distances[o1.getId()], distances[o2.getId()]);
-            });
+            final Queue<Vertex> traversalQueue = new ArrayDeque<>();
             traversalQueue.add(new Vertex(start));
             while (!traversalQueue.isEmpty()) {
                 process(traversalQueue.poll(), graph, distances, traversalQueue);
@@ -144,20 +117,16 @@ public class ShortestReach2 {
         reader.close();
     }
 
-    private static void process(final Vertex currentV, final Map<Vertex, List<Edge>> graph, final int[] distances,
-            final Queue<Vertex> nextToProcess) {
+    private static void process(final Vertex currentV, final Map<Vertex, List<Vertex>> graph, final int[] distances,
+            final Queue<Vertex> traversalQueue) {
         if (graph.containsKey(currentV)) {
-            final List<Edge> edges = graph.get(currentV);
-            edges.stream().forEach(e -> {
-                final int distanceToNeighbor = e.getWeight() + distances[currentV.getId()];
-                final Vertex neighbor = e.getVertex();
-                if (distances[neighbor.getId()] > distanceToNeighbor) {
-                    distances[neighbor.getId()] = distanceToNeighbor;
-                }
-                if (!neighbor.isVisited()) {
-                    nextToProcess.add(neighbor);
-                }
-            });
+            final List<Vertex> neighbors = graph.get(currentV);
+            neighbors.stream() //
+                    .filter(v -> distances[v.getId()] == Integer.MAX_VALUE) //
+                    .forEach(v -> {
+                        distances[v.getId()] = EDGE_WEIGHT + distances[currentV.getId()];
+                        traversalQueue.add(v);
+                    });
         }
         currentV.markVisited();
     }
